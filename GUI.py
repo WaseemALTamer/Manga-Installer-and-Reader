@@ -194,6 +194,8 @@ class MangaReader():
         self.CurrentChapterPages[PageIndex]["ImageLableHolder"].config(image=ResizeImage)
         self.CurrentChapterPages[PageIndex]["TempImage"] = ResizeImage
         self.CurrentChapterPages[PageIndex]["ImageLableHolder"].grid(row=0, column=0, sticky='ew')
+        BlankSpace = tk.Label(self.MiddleFrame, highlightbackground="#000000", bd=0, background="#000000",highlightcolor="#000000")
+        BlankSpace.grid(row=1, column=0, pady=150)
 
         self.CallAnUpdate()
         self.DispalyedPageIndex = PageIndex
@@ -206,10 +208,7 @@ class MangaReader():
 
 
     def LoadChapterContent(self, directory):
-
-
         entries = sorted([int(element[:-4]) for element in os.listdir(directory) if element.endswith('.png')])
- 
         for i, entry in enumerate(entries):
             page_path = f"{directory}/{entry}.png"
             image_page = Image.open(page_path)
