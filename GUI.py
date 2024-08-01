@@ -80,7 +80,7 @@ class MangaReader():
         self.root = root
         self.PreviousWindow = None
         self.MangaData = None
-
+        #self.BufferImage = None
         self.CurrentChapterPages = []
         self.DispalyedPageIndex = None
         self.StartingChapterPageIndex = 0
@@ -124,7 +124,7 @@ class MangaReader():
                             bg="#000000",
                             highlightbackground="#1F1F1F",
                             highlightcolor="#1F1F1F",
-                            highlightthickness=5)
+                            highlightthickness=0)
         
 
 
@@ -182,7 +182,11 @@ class MangaReader():
         self.PageDimentions = self.CurrentChapterPages[PageIndex]["ImageSize"]
 
         if self.DispalyedPageIndex != None and PageIndex != self.DispalyedPageIndex:
+            self.CurrentChapterPages[self.DispalyedPageIndex]["ImageLableHolder"].config(image="")
+            self.CurrentChapterPages[self.DispalyedPageIndex]["TempImage"] = None
             self.CurrentChapterPages[self.DispalyedPageIndex]["ImageLableHolder"].grid_forget()
+
+            
 
         if self.PageDimentions[0] * self.PageWidthSizeScaler > self.MainCanvasSizeTemp[0]:
             CustemScale = self.MainCanvasSizeTemp[0] / self.PageDimentions[0]
@@ -193,10 +197,14 @@ class MangaReader():
         
         self.CurrentChapterPages[PageIndex]["ImageLableHolder"].config(image=ResizeImage)
         self.CurrentChapterPages[PageIndex]["TempImage"] = ResizeImage
+        #self.BufferImage = ResizeImage
         self.CurrentChapterPages[PageIndex]["ImageLableHolder"].grid(row=0, column=0, sticky='ew')
         BlankSpace = tk.Label(self.MiddleFrame, highlightbackground="#000000", bd=0, background="#000000",highlightcolor="#000000")
         BlankSpace.grid(row=1, column=0, pady=150)
 
+
+        
+        
         self.CallAnUpdate()
         self.DispalyedPageIndex = PageIndex
         self.ChapterButtonPOPUP.config(text=f"Chapter: {self.MangaData["CurrentChapter"]}")
@@ -213,7 +221,7 @@ class MangaReader():
             page_path = f"{directory}/{entry}.png"
             image_page = Image.open(page_path)
             image_size = (image_page.width, image_page.height)
-            ImageLableHolder = tk.Label(self.MiddleFrame, highlightbackground="#000000", highlightthickness=0, bd=0, background="#FFFFFF")
+            ImageLableHolder = tk.Label(self.MiddleFrame, highlightbackground="#1F1F1F", highlightthickness=4, bd=0, background="#1F1F1F")
             ImageLableHolder.bind("<MouseWheel>", self.SmoothCanvasScroller) 
             ImageLableHolder.bind("<ButtonRelease-1>", self.onclick_onpage_label)
             
@@ -258,6 +266,8 @@ class MangaReader():
     def LoadAChapterOnThread(self):
         for index, Page in enumerate(self.CurrentChapterPages):
             Page["ImageLableHolder"].destroy()
+            del Page
+            pass
 
         
         self.CurrentChapterPages = []
@@ -274,8 +284,8 @@ class MangaReader():
         current_view = self.scrollbar_y.get()
 
         if int(Width) != 0:
-            self.scroll_amount += float((event.delta * 2 * -1) / int(Width))
-            self.duration = 0.5
+            self.scroll_amount += float((event.delta * -1) / int(Width))
+            self.duration = 0.2
             self.start_time = time.time()
             self.end_time = time.time() + self.duration
 
@@ -292,6 +302,7 @@ class MangaReader():
             target_pos = current_pos + ((self.scroll_amount) * progress)
             self.scroll_amount -= ((self.scroll_amount) * progress)
             self.MiddleCanvas.yview_moveto(target_pos)
+            self.MiddleCanvas.update_idletasks()
             time.sleep(1/120)
 
 

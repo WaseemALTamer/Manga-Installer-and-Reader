@@ -335,8 +335,8 @@ class HomeWindow():
 
         if int(Width) != 0:
 
-            self.scroll_amount += float((event.delta * 2 * -1) / int(Width))
-            self.duration = 0.5
+            self.scroll_amount += float((event.delta * -1) / int(Width))
+            self.duration = 0.2
             self.start_time = time.time()
             self.end_time = time.time() + self.duration
 
@@ -358,6 +358,7 @@ class HomeWindow():
             target_pos = current_pos + ((self.scroll_amount) * progress)
             self.scroll_amount -= ((self.scroll_amount) * progress)
             self.MangasHolderCanvas.yview_moveto(target_pos)
+            self.MangasHolderCanvas.update_idletasks()
             time.sleep(1/120)
 
 
