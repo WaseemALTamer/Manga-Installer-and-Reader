@@ -254,15 +254,16 @@ class MangaReader():
 
         try:
             BookMarkPath = f"MangaOutput/{self.MangaData["FolderName"]}/BookMark.json"
-            if os.path.exists(BookMarkPath):
-                # Open and load the existing JSON file
-                with open(BookMarkPath, 'r') as file:
-                    data = json.load(file)
-                    BookMarkData["Page"] = data["Page"]
-                    BookMarkData["Chapter"] = data["Chapter"]
-                    BookMarkData["ReadChapters"] = data["ReadChapters"]
-                    if self.MangaData["CurrentChapter"] not in BookMarkData["ReadChapters"]:
-                        BookMarkData["ReadChapters"].append(self.MangaData["CurrentChapter"])
+            if not os.path.exists(BookMarkPath):
+                with open(BookMarkPath, 'w') as file:
+                    json.dump(BookMarkData, file, indent=4)
+            with open(BookMarkPath, 'r') as file:
+                data = json.load(file)
+                BookMarkData["Page"] = data["Page"]
+                BookMarkData["Chapter"] = data["Chapter"]
+                BookMarkData["ReadChapters"] = data["ReadChapters"]
+                if self.MangaData["CurrentChapter"] not in BookMarkData["ReadChapters"]:
+                    BookMarkData["ReadChapters"].append(self.MangaData["CurrentChapter"])
         except Exception as e:
             print(e)
 
