@@ -153,6 +153,11 @@ class MangaReader():
         self.PageButtonPOPUP = tk.Button(self.LeftCanvas,text="Page: 0", background="#1F1F1F", highlightcolor="#1F1F1F",fg="#626262",activebackground="#1E1E1E",bd=0, font= 16)
         self.PageButtonPOPUP.place(rely= 0.07, relx=0.1)
 
+        #BookMarkButton
+        self.BookMark = tk.Button(self.LeftCanvas,text="BookMark", background="#1F1F1F", highlightcolor="#1F1F1F",fg="#626262",activebackground="#1E1E1E",bd=0, font= 16,command=self.on_press_book_mark)
+        self.BookMark.place(rely= 0.92, relx=0.1)
+
+
 
 
         self.FullScreenWindowButton = tk.Button(self.MainCanvas,text="⛶", background="#2F2F2F", highlightcolor="#2F2F2F",activebackground="#1E1E1E",bd=0,command=self.onclick_fullscreen_button, font= 16)
@@ -185,22 +190,22 @@ class MangaReader():
             self.CurrentChapterPages[self.DispalyedPageIndex]["ImageLableHolder"].config(image="")
             self.CurrentChapterPages[self.DispalyedPageIndex]["TempImage"] = None
             self.CurrentChapterPages[self.DispalyedPageIndex]["ImageLableHolder"].grid_forget()
+            self.CurrentChapterPages[self.DispalyedPageIndex]["BlankSpace"].destroy()
 
             
 
         if self.PageDimentions[0] * self.PageWidthSizeScaler > self.MainCanvasSizeTemp[0]:
             CustemScale = self.MainCanvasSizeTemp[0] / self.PageDimentions[0]
-            ResizeImage = ImageTk.PhotoImage(self.CurrentChapterPages[PageIndex]["ImagePage"].resize(((int(self.PageDimentions[0]*self.PageWidthSizeScaler * CustemScale)),(int(self.PageDimentions[1] * self.PageWidthSizeScaler * CustemScale)))))
+            self.CurrentChapterPages[PageIndex]["TempImage"] = ImageTk.PhotoImage(self.CurrentChapterPages[PageIndex]["ImagePage"].resize(((int(self.PageDimentions[0]*self.PageWidthSizeScaler * CustemScale)),(int(self.PageDimentions[1] * self.PageWidthSizeScaler * CustemScale)))))
             self.PageDimentions = ((int(self.PageDimentions[0] * CustemScale)),(int(self.PageDimentions[1] * CustemScale)))
         else:
-            ResizeImage = ImageTk.PhotoImage(self.CurrentChapterPages[PageIndex]["ImagePage"].resize(((int(self.PageDimentions[0]*self.PageWidthSizeScaler)),(int(self.PageDimentions[1] * self.PageWidthSizeScaler)))))
+            self.CurrentChapterPages[PageIndex]["TempImage"] = ImageTk.PhotoImage(self.CurrentChapterPages[PageIndex]["ImagePage"].resize(((int(self.PageDimentions[0]*self.PageWidthSizeScaler)),(int(self.PageDimentions[1] * self.PageWidthSizeScaler)))))
         
-        self.CurrentChapterPages[PageIndex]["ImageLableHolder"].config(image=ResizeImage)
-        self.CurrentChapterPages[PageIndex]["TempImage"] = ResizeImage
-        #self.BufferImage = ResizeImage
+        self.CurrentChapterPages[PageIndex]["ImageLableHolder"].config(image=self.CurrentChapterPages[PageIndex]["TempImage"])
         self.CurrentChapterPages[PageIndex]["ImageLableHolder"].grid(row=0, column=0, sticky='ew')
-        BlankSpace = tk.Label(self.MiddleFrame, highlightbackground="#000000", bd=0, background="#000000",highlightcolor="#000000")
-        BlankSpace.grid(row=1, column=0, pady=150)
+        self.CurrentChapterPages[PageIndex]["BlankSpace"] = tk.Label(self.MiddleFrame, highlightbackground="#000000", bd=0, background="#000000",highlightcolor="#000000")
+        self.CurrentChapterPages[PageIndex]["BlankSpace"].grid(row=1, column=0, pady=150)
+
 
 
         
@@ -224,7 +229,7 @@ class MangaReader():
             ImageLableHolder = tk.Label(self.MiddleFrame, highlightbackground="#1F1F1F", highlightthickness=4, bd=0, background="#1F1F1F")
             ImageLableHolder.bind("<MouseWheel>", self.SmoothCanvasScroller) 
             ImageLableHolder.bind("<ButtonRelease-1>", self.onclick_onpage_label)
-            
+
             self.CurrentChapterPages.append({
                 "ImagePage": image_page,
                 "ImageSize": image_size,
@@ -234,9 +239,39 @@ class MangaReader():
 
             if i == self.StartingChapterPageIndex:
                 self.LoadPageToMiddleFrame(self.StartingChapterPageIndex)
+                self.StartingChapterPageIndex = 0
 
         if self.StartingChapterPageIndex == -1:
             self.LoadPageToMiddleFrame(len(entries) - 1)
+
+
+
+        BookMarkData = {
+            "Chapter" : None,
+            "Page" : None,
+            "ReadChapters": []
+        }
+
+        try:
+            BookMarkPath = f"MangaOutput/{self.MangaData["FolderName"]}/BookMark.json"
+            if os.path.exists(BookMarkPath):
+                # Open and load the existing JSON file
+                with open(BookMarkPath, 'r') as file:
+                    data = json.load(file)
+                    BookMarkData["Page"] = data["Page"]
+                    BookMarkData["Chapter"] = data["Chapter"]
+                    BookMarkData["ReadChapters"] = data["ReadChapters"]
+                    if self.MangaData["CurrentChapter"] not in BookMarkData["ReadChapters"]:
+                        BookMarkData["ReadChapters"].append(self.MangaData["CurrentChapter"])
+        except Exception as e:
+            print(e)
+
+
+        with open(BookMarkPath, 'w') as file:
+            json.dump(BookMarkData, file, indent=4)
+
+
+        
 
     def LoadNextPageToMiddleFrame(self, event=None):
         TotalNumberOfPages = len(self.CurrentChapterPages)
@@ -307,6 +342,30 @@ class MangaReader():
 
 
 
+
+
+    def on_press_book_mark(self):
+        BookMarkPath = f"MangaOutput/{self.MangaData["FolderName"]}/BookMark.json"
+
+        
+        
+
+        BookMarkData = {
+            "Chapter" : self.MangaData["CurrentChapter"],
+            "Page" : self.DispalyedPageIndex,
+            "ReadChapters": []
+        }
+
+        if os.path.exists(BookMarkPath):
+            with open(BookMarkPath, "r") as file:
+                data = json.load(file)
+                BookMarkData["ReadChapters"] = data.get("ReadChapters", [])
+
+
+        with open(BookMarkPath, 'w') as file:
+            json.dump(BookMarkData, file, indent=4)
+
+
     def onclick_onpage_label(self, event):
         LeftSide = event.widget.winfo_width() / 2
         if event.x <= LeftSide:
@@ -323,6 +382,7 @@ class MangaReader():
 
     def onclick_back_button(self):
         self.HideWindow()
+        self.PreviousWindow.TempData = None
         self.PreviousWindow.DisplayWindow()
 
     def on_resize(self, event=None):
