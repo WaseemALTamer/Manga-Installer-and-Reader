@@ -80,7 +80,6 @@ class MangaReader():
         self.root = root
         self.PreviousWindow = None
         self.MangaData = None
-        #self.BufferImage = None
         self.CurrentChapterPages = []
         self.DispalyedPageIndex = None
         self.StartingChapterPageIndex = 0
@@ -208,11 +207,10 @@ class MangaReader():
 
 
 
-        
-        
+
         self.CallAnUpdate()
         self.DispalyedPageIndex = PageIndex
-        self.ChapterButtonPOPUP.config(text=f"Chapter: {self.MangaData["CurrentChapter"]}")
+        self.ChapterButtonPOPUP.config(text=f"Chapter: {self.ChapterID_ToSeasonalChapter(self.MangaData["CurrentChapter"])}")
         self.PageButtonPOPUP.config(text=f"Page: {self.DispalyedPageIndex + 1}")
         self.MiddleCanvas.yview_moveto(0)
         self.MiddleCanvas.update_idletasks()
@@ -329,7 +327,7 @@ class MangaReader():
     def SmoothCanvasScrollerThread(self):
         while self.SmoothCanvasScrollerState:
             if time.time() >= self.end_time:
-                time.sleep(1/120)
+                time.sleep(1/60)
                 continue
             current_pos = self.scrollbar_y.get()[0]
             current_time = time.time()
@@ -339,7 +337,7 @@ class MangaReader():
             self.scroll_amount -= ((self.scroll_amount) * progress)
             self.MiddleCanvas.yview_moveto(target_pos)
             self.MiddleCanvas.update_idletasks()
-            time.sleep(1/120)
+            time.sleep(1/60)
 
 
 
@@ -402,6 +400,27 @@ class MangaReader():
         self.SmoothCanvasScrollerState = False
 
 
+
+    def ChapterID_ToSeasonalChapter(self, Chapter):
+        Index = int(str(Chapter)[0])
+        ChapterIDWithoutIndex =  int(str(Chapter)[1:])
+        ChapterNumber = self.format_float(ChapterIDWithoutIndex * 0.1) 
+
+        if Index > 1:
+            return f"S{Index}  {ChapterNumber}"
+        else:
+            return f"{ChapterNumber}"
+
+
+
+
+    def format_float(self, value):
+        if isinstance(value, float):
+            if value.is_integer():
+                return int(value)
+            else:
+                return value
+        return value
 
 
 x = MyTkinterApp()

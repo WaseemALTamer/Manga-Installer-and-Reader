@@ -312,7 +312,7 @@ class HomeWindow():
             event.widget.config(image=temp_image)
             self.MangaData[self.MangaCoverCanvases[event.widget]["FolderName"]]["ImageTemp"] = temp_image
             if ScaleRatio == FinalScale:
-                break
+                return
             time.sleep(1/120)
         
     def SmoothTranstionNameTextMangaCoverThread(self, event, EndPostion):
@@ -349,7 +349,7 @@ class HomeWindow():
     def SmoothCanvasScrollerThread(self):
         while self.SmoothCanvasScrollerState:
             if time.time() >= self.end_time:
-                time.sleep(1/120)
+                time.sleep(1/60)
                 continue
             current_pos = self.scrollbar_y.get()[0]
             current_time = time.time()
@@ -359,7 +359,7 @@ class HomeWindow():
             self.scroll_amount -= ((self.scroll_amount) * progress)
             self.MangasHolderCanvas.yview_moveto(target_pos)
             self.MangasHolderCanvas.update_idletasks()
-            time.sleep(1/120)
+            time.sleep(1/60)
 
 
 

@@ -43,6 +43,8 @@ class Analyser():
 
     def DataLookUp(self, Name):
         for Object in self.Data:
+            if Name == Object["i"]:
+                return  Object["i"]
             if Name == Object["s"]:
                 return Object["i"]
             else:

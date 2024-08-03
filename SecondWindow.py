@@ -20,6 +20,10 @@ class MangaHolder():
         self.BookMarkData = None
         self.MangaCoverScale = 800
 
+        self.ChaptersHashMapListboxElements = {
+            #"Chapter 1" : 100010   #this maps Chapters to there chaptersID
+        }
+
         #Main Canvas
         self.MainCanvas = tk.Canvas(self.root,
                                     bg="#000000",
@@ -125,23 +129,39 @@ class MangaHolder():
                                                         "HoveredIndex": None}
             
             self.ChaptersHolderListbox.delete(0, tk.END) 
-            Chapters = sorted([float(element) for element in self.MangaData["ChaptersData"]])
+            Chapters = sorted([int(element) for element in self.MangaData["ChaptersData"]])
             for index, Chapter in enumerate(Chapters):            
                 if self.BookMarkData != None and Chapter in self.BookMarkData["ReadChapters"]:
                     if self.BookMarkData["Chapter"] == Chapter:
-                        self.ChaptersHolderListbox.insert(index, f"{Chapter} (BookMarked)")
-                        self.ChaptersHolderListbox.itemconfig(index, foreground="#BAA200")
+                        Text = f"{self.ChapterID_ToSeasonalChapter(Chapter)} (BookMarked)"
+                        self.ChaptersHolderListbox.insert(index, Text)
+                        self.ChaptersHolderListbox.itemconfig(index, foreground="#BAA200", background=self.ChapterHolderListboxWidgetInformation["ElementColors"][index%2])
                         self.LoadBookMarkButton = tk.Button(self.MainCanvas,text="Load BookMark", background="#1F1F1F", highlightcolor="#1F1F1F",fg="#626262",activebackground="#1E1E1E",bd=0, font= 16, command=self.onclick_LoadBookMark_button)
                         self.LoadBookMarkButton.place(relx=0.31,rely=0.03)
                     else:
-                        self.ChaptersHolderListbox.insert(index, f"{Chapter} (Read)")
-                        self.ChaptersHolderListbox.itemconfig(index, foreground="#22B14C")
+                        Text = f"{self.ChapterID_ToSeasonalChapter(Chapter)} (Read)"
+                        self.ChaptersHolderListbox.insert(index, Text)
+                        self.ChaptersHolderListbox.itemconfig(index, foreground="#22B14C", background=self.ChapterHolderListboxWidgetInformation["ElementColors"][index%2])
                 else:
-                    self.ChaptersHolderListbox.insert(index, Chapter)
+                    Text = f"{self.ChapterID_ToSeasonalChapter(Chapter)}"
+                    self.ChaptersHolderListbox.insert(index, Text)
                     self.ChaptersHolderListbox.itemconfig(index, background=self.ChapterHolderListboxWidgetInformation["ElementColors"][index%2])
+                self.ChaptersHashMapListboxElements[Text] = Chapter
                 self.ChapterHolderListboxWidgetInformation["NumberOfChapter"] += 1
                 self.MangaData["ChaptersData"][index] = Chapters[index]
             self.TempData = self.MangaData
+
+
+    def ChapterID_ToSeasonalChapter(self, Chapter):
+        Index = int(str(Chapter)[0])
+        ChapterIDWithoutIndex =  int(str(Chapter)[1:])
+        ChapterNumber = self.format_float(ChapterIDWithoutIndex * 0.1) 
+
+        if Index > 1:
+            return f"S{Index}  {ChapterNumber}"
+        else:
+            return f"{ChapterNumber}"
+
 
 
     def onclick_back_button(self):
@@ -155,11 +175,8 @@ class MangaHolder():
         if selected_index:
             selected_index = selected_index[0]
             selected_item = event.widget.get(selected_index)
-            if str(selected_item)[-1] == ")":
-                Chapter = selected_item.split()[0]
-            else:
-                Chapter = selected_item
-            self.MangaData["CurrentChapter"] = float(Chapter)
+            Chapter = self.ChaptersHashMapListboxElements[selected_item] 
+            self.MangaData["CurrentChapter"] = Chapter
             self.NextWindow.MangaData = self.MangaData
             self.HideWindow()
             self.NextWindow.DisplayWindow()
@@ -168,7 +185,7 @@ class MangaHolder():
     def onclick_LoadBookMark_button(self):
         Chapter = self.BookMarkData["Chapter"]
         Page = self.BookMarkData["Page"]
-        self.MangaData["CurrentChapter"] = float(Chapter)
+        self.MangaData["CurrentChapter"] = int(Chapter)
         self.NextWindow.StartingChapterPageIndex = Page
         self.NextWindow.MangaData = self.MangaData
         self.HideWindow()
@@ -221,3 +238,19 @@ class MangaHolder():
     
     def HideWindow(self):
         self.MainCanvas.place_forget()
+
+
+
+
+
+
+
+
+
+    def format_float(self, value):
+        if isinstance(value, float):
+            if value.is_integer():
+                return int(value)
+            else:
+                return value
+        return value
