@@ -1,5 +1,0 @@
-ttkthemes
-pillow
-bs4
-requests
-notebook
