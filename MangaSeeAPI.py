@@ -93,7 +93,7 @@ class MangaGraper():
             ChaptersID.append(Chapter)
         ChaptersFound = []
         for ChapterKey, ChapterData in self.Data[Pointer]["Chapters"].items():
-            if ChapterData["ChpaterID"] in ChaptersID:
+            if str(ChapterData["ChpaterID"]) in ChaptersID:
                 ChapterData["ChpaterID"] = None
             else:
                 ChaptersFound.append(ChapterData["ChpaterID"])
