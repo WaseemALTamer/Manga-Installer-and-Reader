@@ -33,8 +33,7 @@ print(results)
     [{'i': 'Shingeki-No-Kyojin', 's': 'Attack on Titan', 'a': ['Shingeki no Kyojin'], 'p': 1.0}, {'i': 'Shingeki-No-Kyojin-Before-The-Fall', 's': 'Attack on Titan - Before the Fall', 'a': ['Shingeki no Kyojin - Before the Fall'], 'p': 1.0}, {'i': 'Shingeki-Kyojin-Chuugakkou', 's': 'Attack on Titan - Junior High', 'a': ['Shingeki! Kyojin Chuugakkou'], 'p': 1.0}, {'i': 'Shingeki-No-Kyojin---Lost-Girls', 's': 'Attack on Titan - Lost Girls', 'a': ['Shingeki no Kyojin - Lost Girls'], 'p': 1.0}, {'i': 'Shingeki-No-Kyojin-Birth-Of-Levi', 's': 'Attack on Titan - No Regrets', 'a': ['Shingeki no Kyojin - Birth of Levi'], 'p': 1.0}, {'i': 'Attack-on-Titan-No-Regrets-Color', 's': 'Attack on Titan - No Regrets - Color', 'a': [], 'p': 1.0}, {'i': 'Spoof-on-Titan', 's': 'Spoof on Titan', 'a': ['Sungeki no Kyojin'], 'p': 0.6666666666666666}, {'i': 'The-Best-of-Attack-on-Titan-In-Color', 's': 'The Best of Attack on Titan - In Color', 'a': [], 'p': 1.0}]
     
 
-This will do a quick requrests and grap all the manga chapters that it can see note that this will not work for mangas
-that have a seasonal Chapters
+This will do a quick requrests and grap all the manga chapters that it can see
 
 
 ```python
