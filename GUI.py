@@ -43,6 +43,17 @@ class MyTkinterApp:
         self.root.bind('<Control-minus>', self.on_ctrl_minus)
         self.root.bind('<Control-equal>', self.on_ctrl_plus)
 
+        self.root.bind('<Left>', self.on_left_arrow)
+        self.root.bind('<Right>', self.on_right_arrow)
+
+    def on_right_arrow(self, event):
+        if self.ThridWindow.SmoothCanvasScrollerState:    #note! that i am checking for scroll wheel instead of checking 
+            self.ThridWindow.LoadNextPageToMiddleFrame()  #if the main canvase if if it is visiable this is  because  i want
+                                                          # to cut correnrs and it should be done the other way
+
+    def on_left_arrow(self, event):
+        if self.ThridWindow.SmoothCanvasScrollerState:    #note! same comment as the one above it
+            self.ThridWindow.LoadPreviousPageToMiddleFrame()
 
     def on_ctrl_minus(self, event):
         self.ThridWindow.PageWidthSizeScaler -= 0.05
