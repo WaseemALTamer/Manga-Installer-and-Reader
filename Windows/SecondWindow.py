@@ -104,14 +104,12 @@ class MangaHolder():
 
     def OnDisplayWindow(self):
         #DisplayImage
-        CoverImage = ImageTk.PhotoImage(self.MangaData["CoverImage"].resize(((self.MangaCoverScale)//3,(self.MangaCoverScale)//2)))
-        self.MangaData["TempImage"] = CoverImage
-        ImageLable = tk.Label(self.ImageCanvas, image=CoverImage,background="#1F1F1F", fg="#1F1F1F", highlightthickness=5, highlightbackground="#1F1F1F")
+        self.MangaData["TempImage"] =  self.MangaData["ReshapedCoverImage"] # i am createing a temp Image so the image is not data collected
+        ImageLable = tk.Label(self.ImageCanvas, image=self.MangaData["TempImage"],background="#1F1F1F", fg="#1F1F1F", highlightthickness=5, highlightbackground="#1F1F1F")
         ImageLable.grid(row=0,column=0)
         #DisplayChaptersHolder
 
     def AddMangaChapters(self):
-            
         BookMarkPath = f"MangaOutput/{self.MangaData["FolderName"]}/BookMark.json"
         self.BookMarkData = None
         if os.path.exists(BookMarkPath):
@@ -127,7 +125,7 @@ class MangaHolder():
                                                         "HoveredIndex": None}
             
             self.ChaptersHolderListbox.delete(0, tk.END) 
-            Chapters = sorted([int(element) for element in self.MangaData["ChaptersData"]])
+            Chapters = sorted([int(element) for element in self.MangaData["Chapters"]])
             for index, Chapter in enumerate(Chapters):            
                 if self.BookMarkData != None and Chapter in self.BookMarkData["ReadChapters"]:
                     if self.BookMarkData["Chapter"] == Chapter:
@@ -146,7 +144,7 @@ class MangaHolder():
                     self.ChaptersHolderListbox.itemconfig(index, background=self.ChapterHolderListboxWidgetInformation["ElementColors"][index%2])
                 self.ChaptersHashMapListboxElements[Text] = Chapter
                 self.ChapterHolderListboxWidgetInformation["NumberOfChapter"] += 1
-                self.MangaData["ChaptersData"][index] = Chapters[index]
+                self.MangaData["Chapters"][index] = Chapters[index]
             self.TempData = self.MangaData
 
 

@@ -45,7 +45,7 @@ class MangaGraper():
         script = self.ScriptFromHtml(MangaLinkName,Chapter=Chapter,Page=Page)
         self.ExtractChaptersAndPages(script, MangaLinkName)
         return MangaLinkName
-    
+
 
 
     def InstallMangaChaptersMT(self, MangaDataPointer, MangaName, directory= f"MangaOutput", ThreadCount=5):
