@@ -1,3 +1,10 @@
+This Repository is outdated it doesnt work as the api is outdated since the website has been shutdown, if you want a new api for manga check out "WeebCentral-API" for a basic api note that this will not install the manga for you like this one if you want that then code it your self good luck this repostiry is dead and only shows code for edcational perposes and how my code will improve over time
+
+
+
+
+
+
 to install all the libraries used in this project you can navigate to the file directory
 and run : 
             pip install -r requirements.txt
